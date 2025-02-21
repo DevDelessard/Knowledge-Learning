@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from api.views.__init__ import home
+from api.views import home
 
 
 
