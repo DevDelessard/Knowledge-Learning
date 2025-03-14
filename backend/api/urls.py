@@ -1,6 +1,6 @@
 from django.urls import path
 from api.views.course_views import CourseListView, CourseDetailView
-from api.views.user_views import UserListView, UserDetailView, RegisterView
+from api.views.user_views import UserListView, UserDetailView, RegisterView, LoginView, ActivateUserView
 from api.views.enrollment_views import EnrollmentListView, EnrollmentDetailView
 from api.views import home  # Import pour la page d'accueil
 from api.views.domaine_views import DomaineListView
@@ -30,5 +30,7 @@ urlpatterns = [
     path('lessons/<str:domaine>/', LessonByDomainView.as_view(), name='lessons-by-domain'),
 
     path('register/', RegisterView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name="login"),
+    path('activate/<int:user_id>/', ActivateUserView.as_view(), name='activate-account'),
 
 ]
