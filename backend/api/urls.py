@@ -6,12 +6,13 @@ from api.views import home  # Import pour la page d'accueil
 from api.views.domaine_views import DomaineListView
 from api.views.lesson_views import LessonByDomainView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from api.views.achat import AchatCreateView, AchatListView 
 
 
 
 
 urlpatterns = [
-    path('', home, name='home'),  # Page d'accueil de l'API
+    path('', home, name='home'),
 
     path('courses/', CourseListView.as_view(), name='course-list'),
     path('courses/<int:pk>/', CourseDetailView.as_view(), name='course-detail'),
@@ -26,11 +27,16 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('domaines/', DomaineListView.as_view(), name='domaine-list'),
-
     path('lessons/<str:domaine>/', LessonByDomainView.as_view(), name='lessons-by-domain'),
 
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name="login"),
     path('activate/<int:user_id>/', ActivateUserView.as_view(), name='activate-account'),
 
+    # Pour créer un achat
+    path('achats/create/', AchatCreateView.as_view(), name='achat-create'),
+
+    # Pour récupérer les achats de l'utilisateur connecté
+    path('achats/', AchatListView.as_view(), name='achat-list'),
+        
 ]
