@@ -7,9 +7,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from api.models.course import Course
 
-
 User = get_user_model()
 
+# --- Test création de compte ---
 class InscriptionTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -25,15 +25,15 @@ class InscriptionTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
         user = User.objects.get(username="testuser")
-        self.assertFalse(user.is_active)  # l'utilisateur n'est pas actif avant validation email
+        self.assertFalse(user.is_active)
 
-
+# --- Test activation de compte ---
 class ActivationCompteTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
+            username="activationuser",
+            email="activation@example.com",
             password="password123"
         )
         self.user.is_active = False
@@ -49,17 +49,17 @@ class ActivationCompteTestCase(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_active)
 
+# --- Test connexion ---
 class ConnexionTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
-            password="password123"
+            username="loginuser",
+            email="login@example.com",
+            password="mypassword"
         )
-        self.user.is_active = False
+        self.user.is_active = True
         self.user.save()
-
 
     def test_connexion_reussie(self):
         response = self.client.post("/api/login/", {
@@ -69,18 +69,23 @@ class ConnexionTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("token", response.data)
 
-
+# --- Test achat d’un cursus ---
 class AchatTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(username="buyer", password="testpass")
+        self.user = User.objects.create_user(
+            username="buyer",
+            email="buyer@example.com",
+            password="testpass"
+        )
         self.user.is_active = True
         self.user.save()
 
         self.client.force_authenticate(user=self.user)
 
         self.course = Course.objects.create(title="Cours Test", price=10.00)
-        self.url = "/api/achats/create/"
+        self.url = "/api/achats/"  # ✅ Bon chemin selon api/urls.py
+
 
     def test_achat_cursus(self):
         response = self.client.post(self.url, {

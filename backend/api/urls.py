@@ -30,7 +30,8 @@ urlpatterns = [
 
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name="login"),
-    path('activate/<int:user_id>/', ActivateUserView.as_view(), name='activate-account'),
+    path('activate/<uidb64>/<token>/', ActivateUserView.as_view(), name='activate'),
+
 
     # Pour créer un achat
     path("achats/", AchatListCreateView.as_view(), name="achats"),
