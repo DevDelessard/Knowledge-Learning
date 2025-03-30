@@ -159,3 +159,5 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 AUTH_USER_MODEL = 'api.User'
 
 CORS_ALLOW_ALL_ORIGINS = True  # TEMPORAIRE pour tester
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'  # ou BigAutoField, mais en l’harmonisant partout

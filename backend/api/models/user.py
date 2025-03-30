@@ -41,8 +41,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def delete(self, *args, **kwargs):
-        LogEntry.objects.filter(user_id=self.id).delete()
+        from django.contrib.admin.models import LogEntry
+        LogEntry.objects.filter(user_id=self.pk).delete()
         super().delete(*args, **kwargs)
+
 
 
 # ✅ Signal pour générer automatiquement un Token après activation du compte

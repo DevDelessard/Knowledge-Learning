@@ -11,6 +11,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 
 class UserListView(generics.ListCreateAPIView):
@@ -89,3 +90,18 @@ class ActivateUserView(APIView):
             user.save()
             return Response({"message": "Compte activé avec succès"}, status=status.HTTP_200_OK)
         return Response({"message": "Ce compte est déjà activé"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
+    def put(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

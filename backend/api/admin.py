@@ -6,6 +6,11 @@ from api.models.lesson import Lesson
 from api.models.quiz import Quiz
 from api.models.progress import Progress
 from api.models.domaine import Domaine
+from django.contrib.admin.models import LogEntry
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
@@ -22,9 +27,13 @@ class LessonAdmin(admin.ModelAdmin):
 # Déclaration correcte de l'admin pour User
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'is_active', 'is_staff', 'is_superuser')  # Afficher ces champs
-    list_filter = ('is_staff', 'is_superuser')  # Ajoute un filtre pour afficher les superutilisateurs
+    list_display = ('username', 'email', 'is_active', 'is_staff', 'is_superuser')
 
+    def delete_queryset(self, request, queryset):
+        # Supprimer les LogEntry associés AVANT la suppression des users
+        LogEntry.objects.filter(user_id__in=queryset.values_list('id', flat=True)).delete()
+        super().delete_queryset(request, queryset)
+        
 # Enregistrement des autres modèles
 admin.site.register(Enrollment)
 admin.site.register(Quiz)
